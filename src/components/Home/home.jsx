@@ -1,43 +1,134 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "../../assets/styles/Home/home.scss";
 import ProfilePhoto from "../../assets/images/profile.svg"
 import { ArrowBackIcon, EditIcon, LinkIcon } from '@chakra-ui/icons';
 import { Button, Input, Menu, MenuButton, MenuItem, MenuList, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger } from '@chakra-ui/react';
 import progressFullScreen from '../chakraUI/progressFullScreen';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Home() {
-
+  const Navigate = useNavigate();
+  const chatBodyRef = useRef(null);
   const [switchScreen, setSwitchScreen] = useState(true);
   const [messagesData, setMessagesData] = useState([]);
   const [groupData, setGroupData] = useState({});
+  const [viewChatList, setViewChatlist] = useState(true);
+  const [currPage, setCurrPage] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const fetchMoreMessages = async()=>{
+    if (isFetching) return;
+    setIsFetching(true);
+    console.log("fetching");
+    let url = `https://qa.corider.in/assignment/chat?page=${currPage+1}`;
+    console.log(url);
+    setCurrPage(currPage+1);
+    console.log(currPage);
+    const response = await(await fetch(url)).json();
+    const receivedMessages = response.chats;
+    setMessagesData(prevMessages => [...receivedMessages, ...prevMessages]);
+    setIsFetching(false);
+  }
+
+  const handleScroll = () => {
+    if (chatBodyRef.current.scrollTop === 0 && !isFetching) {
+      fetchMoreMessages();
+    }
+  };
 
   const fetchData = async () => {
-    let url = `https://qa.corider.in/assignment/chat?page=0`;
-    const data = await (await fetch(url)).json();
-    console.log(data);
-    setGroupData({
-      name: data.name,
-      from: data.from,
-      to: data.to,
-      message: data.message,
-      status: data.status
-    });
-    setMessagesData(data.chats);
+    try {
+      let url = `https://qa.corider.in/assignment/chat?page=0`;
+      const data = await (await fetch(url)).json();
+      
+      setGroupData({
+        name: data.name,
+        from: data.from,
+        to: data.to,
+        message: data.message,
+        status: data.status
+      });
+      setMessagesData(data.chats);
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
+
+
+  function convertToAmPm(dateTime) {
+    // Extract the time part from the dateTime string
+    let time24 = dateTime.split(' ')[1];
+
+    // Split the time string into components
+    let [hours, minutes, seconds] = time24.split(':').map(Number);
+
+    // Determine AM or PM
+    let period = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert hours from 24-hour to 12-hour format
+    hours = hours % 12 || 12;
+
+    // Return formatted time string
+    return `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${period}`;
   }
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+      console.log(chatBodyRef.current);
+    }
+  }, [messagesData.length === 10]);
+
+  useEffect(() => {
+    const chatBodyNode = chatBodyRef.current;
+
+    if (!chatBodyNode) {
+      return;
+    }
+
+    const handleScroll = () => {
+      if (chatBodyNode.scrollTop === 0 && !isFetching) {
+        fetchMoreMessages();
+      }
+    };
+
+    chatBodyNode.addEventListener('scroll', handleScroll);
+
+    return () => {
+      chatBodyNode.removeEventListener('scroll', handleScroll);
+    };
+  });
+
+
+  // useEffect(()=>{
+  //   console.log(window.innerWidth);
+  // }, [window.innerWidth])
 
   return (
     <>
 
       {messagesData.length > 0 ? <div className=' flex'>
-        <div className='plr5 container'>
+        {viewChatList && <div className='plr5 container'>
           <h1 className=''>Chats</h1>
 
-          <div className='chat-list-container flex outer-container mt10' onClick={() => { setSwitchScreen(true); }}>
+          <div className='chat-list-container flex outer-container mt10' onClick={() => {
+            
+            if (window.innerWidth <= 690) {
+              setViewChatlist(false);
+              let ChatScreen = document.querySelector('.chat-screen');
+              ChatScreen.style.visibility = 'visible';
+              ChatScreen.style.display = 'block';
+            }
+            setSwitchScreen(true);
+            Navigate("#message10")
+          }}>
             <div>
               <img src={ProfilePhoto} alt="profilePhoto" />
             </div>
@@ -51,8 +142,8 @@ export default function Home() {
             </div>
           </div>
 
-
         </div>
+        }
         <div className='chat-container'>
           {!switchScreen ?
             <div className='home-screen'>
@@ -100,7 +191,7 @@ export default function Home() {
                 </div>
               </div>
               <hr className='hr' />
-              <div className='chat-body'>
+              <div className='chat-body' ref={chatBodyRef}>
 
                 {messagesData.map((item, index) => {
                   let messageClassName = 'flex align-top ';
@@ -108,17 +199,22 @@ export default function Home() {
                   let self = false;
 
                   if (item.sender.self) {
-                    console.log(index);
+                    
                     self = true;
                     messageClassName += 'justify-right';
                     messageClassName2 += 'self-msg'
-                    console.log(messageClassName);
+                   
                   }
 
+
+                  
                   return (
-                    <div key={index} id='index' className={messageClassName}>
+                    <div key={index} id={index} className={messageClassName}>
                       {!self && <div className='chat-user-icon'><img className='user-img' src={item.sender.image} alt="img" /> </div>}
-                      <div className={messageClassName2}>{item.message}</div>
+                      <div className={messageClassName2}>
+                        <div>{item.message}</div>
+                        <div className='text-right msg-time'>{convertToAmPm(item.time)} {self && <i className="fa-solid fa-check-double"></i>}</div>
+                      </div>
                     </div>
                   )
                 })}
@@ -126,7 +222,7 @@ export default function Home() {
               </div>
               <div className='footer flex apart'>
                 <div>
-                  <Input variant='unstyled' placeholder='Unstyled' />
+                  <input type="text"  />
                 </div>
                 <div>
                   <Popover>

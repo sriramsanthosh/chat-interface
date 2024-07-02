@@ -1,11 +1,12 @@
 .container {
     min-height: 100vh;
-    background-color: red;
+    background-color: #F9F8F3;
     min-width: 350px;
+    border-right: 1px solid black;
 }
 
 .flex {
-
+    background-color: #F9F8F3;
     display: flex;
 }
 
@@ -25,6 +26,9 @@
     justify-content: space-between;
 }
 
+.text-right{
+    text-align: right;
+}
 
 
 
@@ -42,6 +46,7 @@
     padding: 4px;
     cursor: pointer;
     transition: 0.1s;
+    background-color: #F9F8F3;
 
     .chat-title-container {
         margin-left: 15px;
@@ -74,8 +79,8 @@
 
 .chat-container {
     width: 100%;
-    background-color: green;
-
+    min-height: 100vh;
+    background-color: #F9F8F3;
     .chat-name {
         font-size: 26px;
         font-weight: bold;
@@ -90,34 +95,33 @@
 
     position: relative;
     // width: 100%;
-
-    .chat-screen {
-
-        background-color: brown;
-
-        .footer {
-            position: absolute;
-            bottom: 0;
-            text-align: center;
-            // width: 100%;
-        }
+    .footer {
+        position: absolute;
+        bottom: 0;
+        text-align: center;
+        // width: 100%;
     }
 
 
 
 }
 
+.msg-time{
+    font-size: 11px;
+    line-height: 0.1;
+}
+
 .chat-container {
     position: relative;
-
     .chat-body {
+        background-color: #F9F8F3;
         position: absolute;
         margin-top: 105px;
         bottom: 0;
         top: 0;
         overflow-y: auto;
-        background-color: blue;
         padding-bottom: 30px;
+        min-height: 70vh;
 
         div {
             padding: 5px;
@@ -134,14 +138,17 @@
 
         .chat-user-message {
             width: 70%;
-            background-color: brown;
-            border-radius: 4px;
+            background-color: white;
+            color: #606060;
+            border-radius: 12px;
             border-top-left-radius: 0;
         }
 
         .self-msg {
             border-top-right-radius: 0;
-            border-top-left-radius: 4px;
+            border-top-left-radius: 12px;
+            background-color: #1C63D5;
+            color: white;
         }
 
 
@@ -161,7 +168,7 @@
 
     .chat-container{
         visibility: hidden;
-        display: none;
+        // display: none;
     }
 
     
