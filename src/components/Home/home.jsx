@@ -80,7 +80,6 @@ export default function Home() {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
       console.log(chatBodyRef.current);
     }
-    // eslint-disable-next-line
   }, [messagesData.length === 10]);
 
   useEffect(() => {
@@ -182,7 +181,6 @@ export default function Home() {
                   <Menu >
                     <MenuButton style={{marginRight:"25px", border:"0", cursor:"pointer"}}><i className="fa-solid fa-ellipsis-vertical"></i></MenuButton>
                     <MenuList style={{borderRadius:"8px", border:"1px solid gray"}}>
-                      {/* MenuItems are not rendered unless Menu is open */}
                       <MenuItem style={{padding:"10px",  border:"none",borderBottom:"1px solid gray",fontWeight:"550", background:"white", cursor:"pointer", borderTopRightRadius:"8px", borderTopLeftRadius:"8px"}}><i className="fa-solid fa-user-group"></i>&nbsp; Members</MenuItem>
                       <MenuItem style={{padding:"10px", border:"none",borderBottom:"1px solid gray",fontWeight:"550", background:"white", cursor:"pointer"}}><i className="fa-solid fa-phone"></i>&nbsp; Share Number</MenuItem>
                       <MenuItem style={{padding:"10px", border:"none",fontWeight:"550", background:"white", cursor:"pointer", borderBottomLeftRadius:"8px", borderBottomRightRadius:"8px"}}><i className="fa-regular fa-comment-dots"></i>&nbsp; Report</MenuItem>
