@@ -2,46 +2,41 @@ import React, { useEffect, useRef, useState } from 'react'
 import "../../assets/styles/Home/home.scss";
 import ProfilePhoto from "../../assets/images/profile.svg"
 import { ArrowBackIcon, EditIcon, LinkIcon } from '@chakra-ui/icons';
-import { Button, Input, Menu, MenuButton, MenuItem, MenuList, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger } from '@chakra-ui/react';
-import progressFullScreen from '../chakraUI/progressFullScreen';
-import { useNavigate } from 'react-router-dom';
+import {  Menu, MenuButton, MenuItem, MenuList, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverTrigger } from '@chakra-ui/react';
+
 
 
 export default function Home() {
-  const Navigate = useNavigate();
   const chatBodyRef = useRef(null);
   const [switchScreen, setSwitchScreen] = useState(true);
   const [messagesData, setMessagesData] = useState([]);
+  const [messageDate, setMessageDate] = useState('');
   const [groupData, setGroupData] = useState({});
   const [viewChatList, setViewChatlist] = useState(true);
   const [currPage, setCurrPage] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
+  const month = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
-  const fetchMoreMessages = async()=>{
+  const fetchMoreMessages = async () => {
     if (isFetching) return;
     setIsFetching(true);
     console.log("fetching");
-    let url = `https://qa.corider.in/assignment/chat?page=${currPage+1}`;
+    let url = `https://qa.corider.in/assignment/chat?page=${currPage + 1}`;
     console.log(url);
-    setCurrPage(currPage+1);
+    setCurrPage(currPage + 1);
     console.log(currPage);
-    const response = await(await fetch(url)).json();
+    const response = await (await fetch(url)).json();
     const receivedMessages = response.chats;
     setMessagesData(prevMessages => [...receivedMessages, ...prevMessages]);
     setIsFetching(false);
   }
 
-  const handleScroll = () => {
-    if (chatBodyRef.current.scrollTop === 0 && !isFetching) {
-      fetchMoreMessages();
-    }
-  };
 
   const fetchData = async () => {
     try {
       let url = `https://qa.corider.in/assignment/chat?page=0`;
       const data = await (await fetch(url)).json();
-      
+
       setGroupData({
         name: data.name,
         from: data.from,
@@ -59,19 +54,20 @@ export default function Home() {
 
 
   function convertToAmPm(dateTime) {
-    // Extract the time part from the dateTime string
+    if (!messageDate.length) {
+      let temp = dateTime.split(' ')[0];
+      setMessageDate(temp);
+      console.log(temp);
+    }
+
     let time24 = dateTime.split(' ')[1];
 
-    // Split the time string into components
-    let [hours, minutes, seconds] = time24.split(':').map(Number);
+    let [hours, minutes] = time24.split(':').map(Number);
 
-    // Determine AM or PM
     let period = hours >= 12 ? 'PM' : 'AM';
 
-    // Convert hours from 24-hour to 12-hour format
     hours = hours % 12 || 12;
 
-    // Return formatted time string
     return `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${period}`;
   }
 
@@ -84,6 +80,7 @@ export default function Home() {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
       console.log(chatBodyRef.current);
     }
+    // eslint-disable-next-line
   }, [messagesData.length === 10]);
 
   useEffect(() => {
@@ -106,20 +103,15 @@ export default function Home() {
     };
   });
 
-
-  // useEffect(()=>{
-  //   console.log(window.innerWidth);
-  // }, [window.innerWidth])
-
   return (
     <>
 
       {messagesData.length > 0 ? <div className=' flex'>
         {viewChatList && <div className='plr5 container'>
-          <h1 className=''>Chats</h1>
+          <h1 className='m10'>Chats</h1>
 
           <div className='chat-list-container flex outer-container mt10' onClick={() => {
-            
+
             if (window.innerWidth <= 690) {
               setViewChatlist(false);
               let ChatScreen = document.querySelector('.chat-screen');
@@ -127,12 +119,12 @@ export default function Home() {
               ChatScreen.style.display = 'block';
             }
             setSwitchScreen(true);
-            Navigate("#message10")
+
           }}>
             <div>
               <img src={ProfilePhoto} alt="profilePhoto" />
             </div>
-            <div className='chat-title-container'>
+            <div className='chat-title-container '>
               <div className='chat-title'>
                 {groupData.name}
               </div>
@@ -158,9 +150,20 @@ export default function Home() {
               <div className='flex apart'>
 
                 <div className='chat-name'>
-                  <ArrowBackIcon onClick={() => { setSwitchScreen(false); }} /> {groupData.name}
+                  <ArrowBackIcon onClick={() => { 
+                    if(window.innerWidth <= 690){
+                      setViewChatlist(true);
+              let ChatScreen = document.querySelector('.chat-screen');
+              ChatScreen.style.visibility = 'hidden';
+              ChatScreen.style.display = 'none';
+                  }
+                  else{
+                    
+                    setSwitchScreen(false);
+                  }
+                   }} /> {groupData.name}
                 </div>
-                <div>
+                <div style={{marginRight:"20px"}}>
                   <EditIcon />
                 </div>
               </div>
@@ -179,8 +182,8 @@ export default function Home() {
                   </div>
                 </div>
                 <div>
-                  <Menu isLazy>
-                    <MenuButton><i className="fa-solid fa-ellipsis-vertical"></i></MenuButton>
+                  <Menu >
+                    <MenuButton style={{marginRight:"25px", border:"0"}}><i className="fa-solid fa-ellipsis-vertical"></i></MenuButton>
                     <MenuList>
                       {/* MenuItems are not rendered unless Menu is open */}
                       <MenuItem><i className="fa-solid fa-user-group"></i> Members</MenuItem>
@@ -192,22 +195,31 @@ export default function Home() {
               </div>
               <hr className='hr' />
               <div className='chat-body' ref={chatBodyRef}>
+                {messageDate.length > 0 &&
+                  <div className='date-container'>
+                    <div>
+                      <hr />
+                    </div>
+                    <div>
+                      <span>&nbsp;{messageDate.split('-')[2]}, {month[messageDate.split('-')[1] - 1]} {messageDate.split('-')[0]}&nbsp;</span>
+                      </div>
 
+                  </div>}
                 {messagesData.map((item, index) => {
                   let messageClassName = 'flex align-top ';
                   let messageClassName2 = 'chat-user-message ';
                   let self = false;
 
                   if (item.sender.self) {
-                    
+
                     self = true;
                     messageClassName += 'justify-right';
                     messageClassName2 += 'self-msg'
-                   
+
                   }
 
 
-                  
+
                   return (
                     <div key={index} id={index} className={messageClassName}>
                       {!self && <div className='chat-user-icon'><img className='user-img' src={item.sender.image} alt="img" /> </div>}
@@ -220,26 +232,27 @@ export default function Home() {
                 })}
 
               </div>
-              <div className='footer flex apart'>
-                <div>
-                  <input type="text"  />
+              <div className='footer-container'>
+
+                <div className='footer'>
+                  <div>
+
+                    <input type="text" className='typing-box' placeholder='Reply to @Rohit Yadav' />
+                  </div>
+                  <div>
+
+                    <Popover>
+                      <PopoverTrigger>
+                        <LinkIcon style={{cursor:"pointer"}} />
+                      </PopoverTrigger>
+                      <PopoverContent  style={{backgroundColor:"#008000", padding:"10px", borderRadius:"20px"}}>
+                        <PopoverArrow style={{position:"absolute"}}/>
+                        <PopoverBody><i style={{color:"white"}} className="fa-solid fa-camera"></i> <i style={{color:'white'}} className="fa-solid fa-video"></i> <i style={{color:"white"}} className="fa-solid fa-file-lines"></i></PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                    <i className="fa-regular fa-paper-plane"></i>
+                  </div>
                 </div>
-                <div>
-                  <Popover>
-                    <PopoverTrigger>
-                      <Button>Trigger</Button>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <PopoverArrow />
-                      <PopoverCloseButton />
-                      <PopoverBody><i className="fa-solid fa-camera"></i> <i className="fa-solid fa-video"></i> <i className="fa-solid fa-file-contract"></i></PopoverBody>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div>
-                  <LinkIcon />
-                </div>
-                <div><i className="fa-regular fa-paper-plane"></i></div>
               </div>
             </div>}
 
