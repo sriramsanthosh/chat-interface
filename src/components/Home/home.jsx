@@ -196,7 +196,7 @@ export default function Home() {
                       <hr />
                     </div>
                     <div>
-                      <span>&nbsp;{messageDate.split('-')[2]}, {month[messageDate.split('-')[1] - 1]} {messageDate.split('-')[0]}&nbsp;</span>
+                      <span>&nbsp;{messageDate.split('-')[2]} {month[messageDate.split('-')[1] - 1]}, {messageDate.split('-')[0]}&nbsp;</span>
                       </div>
 
                   </div>}
@@ -219,7 +219,7 @@ export default function Home() {
                     <div key={index} id={index} className={messageClassName}>
                       {!self && <div className='chat-user-icon'><img className='user-img' src={item.sender.image} alt="img" /> </div>}
                       <div className={messageClassName2}>
-                        <div>{item.message}</div>
+                        <span>{item.message}</span>
                         <div className='text-right msg-time'>{convertToAmPm(item.time)} {self && <i className="fa-solid fa-check-double"></i>}</div>
                       </div>
                     </div>
