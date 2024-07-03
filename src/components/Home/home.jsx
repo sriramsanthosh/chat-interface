@@ -139,11 +139,8 @@ export default function Home() {
         <div className='chat-container'>
           {!switchScreen ?
             <div className='home-screen'>
-
-
               <h1 className='text-center'>Chats</h1>
               <p className='text-center'>Send and receive messages.</p>
-
             </div>
             :
             <div className='chat-screen'>
@@ -183,12 +180,12 @@ export default function Home() {
                 </div>
                 <div style={{zIndex:"2"}}>
                   <Menu >
-                    <MenuButton style={{marginRight:"25px", border:"0"}}><i className="fa-solid fa-ellipsis-vertical"></i></MenuButton>
-                    <MenuList>
+                    <MenuButton style={{marginRight:"25px", border:"0", cursor:"pointer"}}><i className="fa-solid fa-ellipsis-vertical"></i></MenuButton>
+                    <MenuList style={{borderRadius:"8px", border:"1px solid gray"}}>
                       {/* MenuItems are not rendered unless Menu is open */}
-                      <MenuItem><i className="fa-solid fa-user-group"></i> Members</MenuItem>
-                      <MenuItem><i className="fa-solid fa-phone"></i> Share Number</MenuItem>
-                      <MenuItem><i className="fa-regular fa-comment-dots"></i> Report</MenuItem>
+                      <MenuItem style={{padding:"10px",  border:"none",borderBottom:"1px solid gray",fontWeight:"550", background:"white", cursor:"pointer", borderTopRightRadius:"8px", borderTopLeftRadius:"8px"}}><i className="fa-solid fa-user-group"></i>&nbsp; Members</MenuItem>
+                      <MenuItem style={{padding:"10px", border:"none",borderBottom:"1px solid gray",fontWeight:"550", background:"white", cursor:"pointer"}}><i className="fa-solid fa-phone"></i>&nbsp; Share Number</MenuItem>
+                      <MenuItem style={{padding:"10px", border:"none",fontWeight:"550", background:"white", cursor:"pointer", borderBottomLeftRadius:"8px", borderBottomRightRadius:"8px"}}><i className="fa-regular fa-comment-dots"></i>&nbsp; Report</MenuItem>
                     </MenuList>
                   </Menu>
                 </div>
