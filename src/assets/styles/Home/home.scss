@@ -92,6 +92,7 @@ hr{
 
 .chat-container {
     width: 100%;
+    z-index: 2;
     min-height:100vh;
     background-color: #F9F8F3;
     margin-top: 10px;
@@ -111,6 +112,7 @@ hr{
     position: relative;
     // width: 100%;
     .footer {
+        z-index: 2;
         background-color: white;
         position: absolute;
         bottom: 8px;
@@ -171,6 +173,7 @@ hr{
     position: relative;
 
     .chat-body {
+        z-index: 1;
         background-color: #F9F8F3;
         position: absolute;
         margin-top: 105px;
@@ -213,7 +216,7 @@ hr{
         }
 
         .chat-user-message {
-            width: 70%;
+            width: 80%;
             background-color: white;
             color: #606060;
             border-radius: 12px;

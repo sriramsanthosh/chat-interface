@@ -181,7 +181,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div>
+                <div style={{zIndex:"2"}}>
                   <Menu >
                     <MenuButton style={{marginRight:"25px", border:"0"}}><i className="fa-solid fa-ellipsis-vertical"></i></MenuButton>
                     <MenuList>
